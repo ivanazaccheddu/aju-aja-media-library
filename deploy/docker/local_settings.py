@@ -4,6 +4,12 @@ FRONTEND_HOST = os.getenv('FRONTEND_HOST', 'http://localhost')
 PORTAL_NAME = os.getenv('PORTAL_NAME', 'MediaCMS')
 SECRET_KEY = os.getenv('SECRET_KEY', 'ma!s3^b-cw!f#7s6s0m3*jx77a@riw(7701**(r=ww%w!2+yk2')
 REDIS_LOCATION = os.getenv('REDIS_LOCATION', 'redis://redis:6379/1')
+TIME_ZONE = "Europe/London"
+CAN_ADD_MEDIA = "all"
+REGISTER_ALLOWED = False
+USERS_CAN_SELF_REGISTER = False
+PORTAL_NAME = "Media library Aju-Aja"
+UPLOAD_MEDIA_ALLOWED = True
 
 DATABASES = {
     "default": {
@@ -33,3 +39,5 @@ CELERY_RESULT_BACKEND = BROKER_URL
 MP4HLS_COMMAND = "/home/mediacms.io/bento4/bin/mp4hls"
 
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
+
+LANGUAGE_CODE = 'it'  # default language

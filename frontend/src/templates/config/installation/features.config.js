@@ -11,7 +11,7 @@ module.exports = {
   },
   sideBar: {
     hideHomeLink: false,
-    hideTagsLink: false,
+    hideTagsLink: true,
     hideCategoriesLink: false,
   },
   media: {

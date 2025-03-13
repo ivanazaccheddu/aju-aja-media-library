@@ -32,7 +32,6 @@ DEFAULT_THEME = "light"
 # not for user uploaded media!
 LOAD_FROM_CDN = False
 LOGIN_ALLOWED = True  # whether the login button appears
-REGISTER_ALLOWED = True  # whether the register button appears
 UPLOAD_MEDIA_ALLOWED = True  # whether the upload media button appears
 CAN_LIKE_MEDIA = True  # whether the like media appears
 CAN_DISLIKE_MEDIA = True  # whether the dislike media appears
@@ -496,6 +495,7 @@ LANGUAGES = [
     ('de', _('German')),
     ('hi', _('Hindi')),
     ('id', _('Indonesian')),
+    ('it', _('Italian')),
     ('ja', _('Japanese')),
     ('ko', _('Korean')),
     ('pt', _('Portuguese')),
@@ -507,7 +507,7 @@ LANGUAGES = [
     ('ur', _('Urdu')),
 ]
 
-LANGUAGE_CODE = 'en'  # default language
+LANGUAGE_CODE = 'it'  # default language
 
 SPRITE_NUM_SECS = 10
 # number of seconds for sprite image.

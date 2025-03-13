@@ -1,4 +1,5 @@
 body.dark_theme {
+
   --body-text-color: rgba(255, 255, 255, 0.88);
   --body-bg-color: #121212;
 
@@ -94,7 +95,7 @@ body.dark_theme {
   --comment-date-hover-text-color: #fff;
 
   --comment-text-color: rgba(255, 255, 255, 0.88);
-  --comment-text-mentions-background-color-highlight:#006622;
+  --comment-text-mentions-background-color-highlight: var(--default-theme-color);
 
   --comment-actions-material-icon-text-color: rgba(255, 255, 255, 0.74);
 

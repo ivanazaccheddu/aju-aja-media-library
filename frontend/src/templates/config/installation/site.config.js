@@ -30,9 +30,6 @@ module.exports = {
     recommended: {
       title: 'Recommended',
     },
-    members: {
-      title: 'Members',
-    },
   },
   userPages: {
     liked: {
@@ -43,9 +40,6 @@ module.exports = {
     },
   },
   taxonomies: {
-    tags: {
-      title: 'Tags',
-    },
     categories: {
       title: 'Categories',
     },

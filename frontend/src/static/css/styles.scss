@@ -23,6 +23,11 @@ body {
   min-height: 100%;
   color: var(--body-text-color);
   background-color: var(--body-bg-color);
+  background-image: url('../images/background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 
   transition-property: overflow;
   transition-duration: 0.2s;
@@ -32,7 +37,6 @@ body {
     overflow: hidden;
   }
 }
-
 @import './includes/typography/_typography.scss';
 @import './includes/form_controls/_form_controls.scss';
 

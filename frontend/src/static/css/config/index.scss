@@ -2,10 +2,12 @@
 @import './_dark_theme.scss';
 
 body {
-  --default-logo-height: 18px;
+  --brand-color: #85B7A7;
+  --default-brand-color: #85B7A7;
+  --theme-color: #85B7A7;
+  --default-theme-color: #85B7A7;
 
-  --default-theme-color: #009933;
-  --default-brand-color: #009933;
+  --default-logo-height: 28px;
 
   --success-color: #00a28b;
   --warning-color: #e09f1f;

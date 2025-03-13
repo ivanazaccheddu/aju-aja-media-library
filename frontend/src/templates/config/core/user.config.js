@@ -28,8 +28,8 @@ module.exports = {
     contactUser: false,
   },
   pages: {
-    about: './profile-about.html',
-    media: './profile-media.html',
-    playlists: './profile-playlists.html',
+    //about: './profile-about.html',
+    //media: './profile-media.html',
+    //playlists: './profile-playlists.html',
   },
 };

@@ -3,7 +3,7 @@ let SIDEBAR = null;
 export function init(settings) {
   SIDEBAR = {
     hideHomeLink: false,
-    hideTagsLink: false,
+    hideTagsLink: true,
     hideCategoriesLink: false,
   };
 
