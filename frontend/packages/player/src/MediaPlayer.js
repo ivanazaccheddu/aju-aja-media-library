@@ -422,7 +422,17 @@ export function MediaPlayer(
 		},
 	});
 
+// After initializing the player
 	this.player = videojs(domPlayer, passOptions);
+
+// Initialize VR plugin if VR content is detected
+	if (pluginOptions.vr) {
+		this.player.vr({
+			projection: pluginOptions.vr.projection || '360',
+			forceCardboard: pluginOptions.vr.forceCardboard || false,
+			debug: pluginOptions.vr.debug || false
+		});
+	}
 
 	/*
 	 * Call plugin.
