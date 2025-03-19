@@ -1,11 +1,49 @@
 import { SiteContext } from '../../../utils/contexts/';
 import { formatInnerLink } from '../../../utils/helpers/';
 
-const validVideoFormats = ['hls', 'h265', 'vp9', 'h264', 'vp8', 'mp4', 'theora']; // NOTE: Keep array items order.
+const validVideoFormats = ['hls', 'h265', 'vp9', 'h264', 'vp8', 'mp4', 'theora']; // NOTE: Keep array order.
+
+/**
+ * Detects if a video is a VR video based on metadata or filename
+ * @param {Object} data - Video metadata
+ * @returns {boolean} - Whether the video is VR/360
+ */
+export function isVRVideo(data) {
+  // Check for VR/360 indicators in filename or metadata
+  if (!data) return false;
+
+  // Check filename for VR indicators
+  if (data.title && (
+      data.title.toLowerCase().includes('360') ||
+      data.title.toLowerCase().includes('vr') ||
+      data.title.toLowerCase().includes('virtual reality') ||
+      data.title.toLowerCase().includes('spherical')
+  )) {
+    return true;
+  }
+
+  // Check tags if available
+  if (data.tags && Array.isArray(data.tags)) {
+    const vrTags = data.tags.filter(tag =>
+        tag.toLowerCase().includes('360') ||
+        tag.toLowerCase().includes('vr') ||
+        tag.toLowerCase().includes('virtual reality') ||
+        tag.toLowerCase().includes('spherical')
+    );
+    if (vrTags.length > 0) return true;
+  }
+
+  // Check for VR specific metadata fields if they exist
+  if (data.is_vr || data.is_360 || data.projection === 'equirectangular') {
+    return true;
+  }
+
+  return false;
+}
 
 function browserSupports_videoCodec(what, debugLog) {
   let ret = null,
-    vid = document.createElement('video');
+      vid = document.createElement('video');
 
   if (!!vid.canPlayType) {
     try {
@@ -16,13 +54,13 @@ function browserSupports_videoCodec(what, debugLog) {
           break;
         case 'h265':
           ret =
-            'probably' === vid.canPlayType('video/mp4; codecs="hvc1.1.L0.0"') ||
-            'probably' === vid.canPlayType('video/mp4; codecs="hev1.1.L0.0"');
+              'probably' === vid.canPlayType('video/mp4; codecs="hvc1.1.L0.0"') ||
+              'probably' === vid.canPlayType('video/mp4; codecs="hev1.1.L0.0"');
           break;
         case 'h264':
           ret =
-            'probably' === vid.canPlayType('video/mp4; codecs="avc1.42E01E"') ||
-            'probably' === vid.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"');
+              'probably' === vid.canPlayType('video/mp4; codecs="avc1.42E01E"') ||
+              'probably' === vid.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"');
           break;
         case 'vp9':
           ret = 'probably' === vid.canPlayType('video/webm; codecs="vp9"');
@@ -46,13 +84,13 @@ function browserSupports_videoCodec(what, debugLog) {
       if (debugLog) {
         if ('no' === vid.canPlayType('video/nonsense')) {
           console.warn(
-            'BUGGY: Codec detection bug in Firefox 3.5.0 - 3.5.1 and Safari 4.0.0 - 4.0.4 that answer "no" to unknown codecs instead of an empty string'
+              'BUGGY: Codec detection bug in Firefox 3.5.0 - 3.5.1 and Safari 4.0.0 - 4.0.4 that answer "no" to unknown codecs instead of an empty string'
           );
         }
 
         if ('probably' === vid.canPlayType('video/webm')) {
           console.warn(
-            'BUGGY: Codec detection bug that Firefox 27 and earlier always says "probably" when asked about WebM, even when the codecs string is not present'
+              'BUGGY: Codec detection bug that Firefox 27 and earlier always says "probably" when asked about WebM, even when the codecs string is not present'
           );
         }
 
@@ -60,7 +98,7 @@ function browserSupports_videoCodec(what, debugLog) {
           switch (vid.canPlayType('video/mp4')) {
             case 'probably':
               console.warn(
-                'BUGGY: Codec detection bug in iOS 4.1 and earlier that switches "maybe" and "probably" around'
+                  'BUGGY: Codec detection bug in iOS 4.1 and earlier that switches "maybe" and "probably" around'
               );
               break;
             case 'maybe':
@@ -70,11 +108,11 @@ function browserSupports_videoCodec(what, debugLog) {
         }
 
         if (
-          'probably' === vid.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"') &&
-          'probably' !== vid.canPlayType('video/mp4; codecs="avc1.42E01E"')
+            'probably' === vid.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"') &&
+            'probably' !== vid.canPlayType('video/mp4; codecs="avc1.42E01E"')
         ) {
           console.warn(
-            'BUGGY: Codec detection bug in Internet Explorer 9 that requires both audio and video codec on test'
+              'BUGGY: Codec detection bug in Internet Explorer 9 that requires both audio and video codec on test'
           );
         }
       }
@@ -86,9 +124,6 @@ function browserSupports_videoCodec(what, debugLog) {
   return ret;
 }
 
-/*
- * LINK: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/video.js
- */
 export function orderedSupportedVideoFormats(includeAll) {
   let order = [];
   let supports = {};
@@ -101,8 +136,8 @@ export function orderedSupportedVideoFormats(includeAll) {
     /*}*/
 
     if (
-      vid.canPlayType('video/mp4; codecs="hvc1.1.L0.0"') ||
-      'probably' === vid.canPlayType('video/mp4; codecs="hev1.1.L0.0"')
+        vid.canPlayType('video/mp4; codecs="hvc1.1.L0.0"') ||
+        'probably' === vid.canPlayType('video/mp4; codecs="hev1.1.L0.0"')
     ) {
       supports.h265 = !0;
       order.push('h265');
@@ -185,9 +220,9 @@ export function videoAvailableCodecsAndResolutions(data, hlsData, supportedForma
         while (i < validVideoFormats.length) {
           if (void 0 !== data[k][validVideoFormats[i]]) {
             if (
-              browserSupports_videoCodec(validVideoFormats[i], !1) &&
-              data[k][validVideoFormats[i]] &&
-              data[k][validVideoFormats[i]].url
+                browserSupports_videoCodec(validVideoFormats[i], !1) &&
+                data[k][validVideoFormats[i]] &&
+                data[k][validVideoFormats[i]].url
             ) {
               if (100 !== data[k][validVideoFormats[i]].progress) {
                 console.warn('VIDEO DEBUG:', 'PROGRESS value is', data[k][validVideoFormats[i]].progress);
@@ -200,8 +235,8 @@ export function videoAvailableCodecsAndResolutions(data, hlsData, supportedForma
               fileExt = data[k][validVideoFormats[i]].url.split('.');
 
               if (
-                fileExt.length &&
-                0 <= supportedFormatsExtensions[validVideoFormats[i]].indexOf(fileExt[fileExt.length - 1])
+                  fileExt.length &&
+                  0 <= supportedFormatsExtensions[validVideoFormats[i]].indexOf(fileExt[fileExt.length - 1])
               ) {
                 ret[k] = void 0 === ret[k] ? { format: [], url: [] } : ret[k];
                 ret[k].format.push(validVideoFormats[i]);
@@ -221,7 +256,7 @@ export function videoAvailableCodecsAndResolutions(data, hlsData, supportedForma
 
 export function extractDefaultVideoResolution(def, data) {
   let i,
-    keys = Object.keys(data);
+      keys = Object.keys(data);
 
   if (void 0 !== data[def]) {
     return def;
@@ -241,5 +276,52 @@ export function extractDefaultVideoResolution(def, data) {
       return keys[i + 1];
     }
     i -= 1;
+  }
+}
+
+/**
+ * Configure VR options for videojs-vr plugin
+ * @param {boolean} isVR - Whether the video is VR/360
+ * @returns {Object|null} - VR configuration options or null if not VR
+ */
+export function getVRConfig(isVR) {
+  if (!isVR) return null;
+
+  return {
+    projection: 'equirectangular', // Most common VR video projection
+    crossorigin: 'anonymous',
+    initVR: true,
+    debug: false,
+    forceCardboard: false,
+    motionControls: true,
+    enableTouch: true,
+    enableVrDisplay: true,
+    responsive: true
+  };
+}
+
+/**
+ * Initialize VR plugin for videojs player
+ * @param {Object} player - videojs player instance
+ * @param {Object} vrConfig - VR configuration options
+ */
+export function initializeVRPlugin(player, vrConfig) {
+  if (!player || !vrConfig) return;
+
+  if (player.vr && typeof player.vr === 'function') {
+    player.vr(vrConfig);
+
+    // Add VR mode indicator
+    const vrIndicator = document.createElement('div');
+    vrIndicator.className = 'vjs-vr-indicator';
+    vrIndicator.innerHTML = '<span>360° VR</span>';
+    player.el().appendChild(vrIndicator);
+
+    // Add VR class for styling
+    player.addClass('vjs-vr-enabled');
+
+    console.log('VR plugin initialized with config:', vrConfig);
+  } else {
+    console.warn('VideoJS VR plugin not available');
   }
 }

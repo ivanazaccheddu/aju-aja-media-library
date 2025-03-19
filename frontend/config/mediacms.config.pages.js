@@ -21,13 +21,12 @@ const formatPage = (page) => {
     : undefined;
   const headLinks = [
     { rel: 'preload', href: './static/lib/video-js/7.20.2/video.min.js', as: 'script' },
-    { rel: 'preload', href: './static/lib/videojs-vr/1.8.0/videojs-vr.min.js', as: 'script' },
-    { rel: 'stylesheet', href: './static/lib/videojs-vr/1.8.0/videojs-vr.min.css' },
+    { rel: 'preload', href: './static/lib/videojs-vr/videojs-vr.js', as: 'script' },
     ...(page.headLinks ? page.headLinks : []),
   ];
   const bodyScripts = [
     { src: './static/lib/video-js/7.20.2/video.min.js' },
-    { src: './static/lib/videojs-vr/1.8.0/videojs-vr.min.js' },
+    { src: './static/lib/videojs-vr/videojs-vr.js' },
     ...(page.bodyScripts ? page.bodyScripts : []),
   ];
 

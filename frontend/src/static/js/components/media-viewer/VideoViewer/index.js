@@ -9,6 +9,7 @@ import {
   orderedSupportedVideoFormats,
   videoAvailableCodecsAndResolutions,
   extractDefaultVideoResolution,
+  isVRVideo, getVRConfig, initializeVRPlugin
 } from './functions';
 import { VideoPlayer, VideoPlayerError } from '../../video-player/VideoPlayer';
 
@@ -37,6 +38,7 @@ export default class VideoViewer extends React.PureComponent {
 
     this.state = {
       displayPlayer: false,
+      isVR: isVRVideo(this.props.data)
     };
 
     this.videoSources = [];
@@ -55,6 +57,14 @@ export default class VideoViewer extends React.PureComponent {
     }
 
     this.videoInfo = videoAvailableCodecsAndResolutions(this.props.data.encodings_info, this.props.data.hls_info);
+
+    // In the onPlayerInit method, after playerInstance is assigned:
+    if (this.isVR) {
+      const vrConfig = getVRConfig(true);
+      setTimeout(() => {
+        initializeVRPlugin(this.playerInstance.player, vrConfig);
+      }, 500); // Small delay to ensure player is fully initialized
+    }
 
     const resolutionsKeys = Object.keys(this.videoInfo);
 
@@ -399,6 +409,14 @@ export default class VideoViewer extends React.PureComponent {
   onPlayerInit(instance, elem) {
     this.playerElem = elem;
     this.playerInstance = instance;
+
+    if (this.state.isVR) {
+      const vrConfig = getVRConfig(true);
+      // Small delay to ensure player is fully loaded
+      setTimeout(() => {
+        initializeVRPlugin(this.playerInstance.player, vrConfig);
+      }, 500);
+    }
 
     if (this.upNextLoaderView) {
       this.upNextLoaderView.setVideoJsPlayerElem(this.playerInstance.player.el_);
