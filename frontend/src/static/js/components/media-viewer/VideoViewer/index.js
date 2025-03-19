@@ -414,12 +414,24 @@ export default class VideoViewer extends React.PureComponent {
 
     if (this.state.isVR) {
       const vrConfig = getVRConfig(true);
-      // Small delay to ensure player is fully loaded
-      setTimeout(() => {
+
+      // Initialize VR immediately
+      initializeVRPlugin(this.playerInstance.player, vrConfig);
+
+      // Also listen for source changes and reinitialize VR
+      this.playerInstance.player.on('loadstart', () => {
+        console.log('Source changed, re-initializing VR');
         initializeVRPlugin(this.playerInstance.player, vrConfig);
-      }, 500);
+      });
+
+      // Listen for quality change events
+      this.playerInstance.player.on('qualitychange', () => {
+        console.log('Quality changed, re-initializing VR');
+        initializeVRPlugin(this.playerInstance.player, vrConfig);
+      });
     }
 
+    // Rest of the method remains unchanged
     if (this.upNextLoaderView) {
       this.upNextLoaderView.setVideoJsPlayerElem(this.playerInstance.player.el_);
       this.onUpdateMediaAutoPlay();

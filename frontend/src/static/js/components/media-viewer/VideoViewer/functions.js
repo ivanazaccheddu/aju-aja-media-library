@@ -332,28 +332,23 @@ export function initializeVRPlugin(player, vrConfig) {
         player.addClass('vjs-vr-enabled');
 
         console.log('VR plugin initialized with config:', vrConfig);
-      } else {
-        console.log('VR plugin already initialized');
       }
     } else {
       console.warn('VideoJS VR plugin not available');
     }
   };
 
-  // Try to initialize immediately if possible
-  if (player.isReady_ && player.el_) {
+  // Critical: Initialize on loadeddata which happens after source is set but before play
+  if (player.readyState() >= 2) {  // HAVE_CURRENT_DATA or higher
     initVR();
+  } else {
+    // Listen for the 'loadeddata' event which fires when media data is available
+    player.one('loadeddata', initVR);
   }
 
-  // Add listeners for various player events that might indicate readiness
-  const events = ['ready', 'loadedmetadata', 'loadeddata', 'canplay', 'playing'];
-  events.forEach(event => {
-    player.one(event, () => {
-      console.log(`VR init attempt on ${event} event`);
-      initVR();
-    });
-  });
+  // Backup: Also initialize on canplay which happens when playback can start
+  player.one('canplay', initVR);
 
-  // If not initialized after all attempts, try once more with a backup timeout
-  setTimeout(initVR, 1000);
+  // Additional backup with short timeout to catch any missed events
+  setTimeout(initVR, 100);
 }
