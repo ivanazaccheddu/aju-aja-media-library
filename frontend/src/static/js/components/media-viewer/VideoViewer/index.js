@@ -60,8 +60,10 @@ export default class VideoViewer extends React.PureComponent {
 
     // In the onPlayerInit method, after playerInstance is assigned:
     if (this.isVR) {
+      console.log('VR video detected');
       const vrConfig = getVRConfig(true);
       setTimeout(() => {
+        console.log('VR video detected time out');
         initializeVRPlugin(this.playerInstance.player, vrConfig);
       }, 500); // Small delay to ensure player is fully initialized
     }

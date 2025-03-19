@@ -305,23 +305,55 @@ export function getVRConfig(isVR) {
  * @param {Object} player - videojs player instance
  * @param {Object} vrConfig - VR configuration options
  */
+/**
+ * Initialize VR plugin for videojs player
+ * @param {Object} player - videojs player instance
+ * @param {Object} vrConfig - VR configuration options
+ */
 export function initializeVRPlugin(player, vrConfig) {
   if (!player || !vrConfig) return;
 
-  if (player.vr && typeof player.vr === 'function') {
-    player.vr(vrConfig);
+  console.log('Attempting to initialize VR plugin');
 
-    // Add VR mode indicator
-    const vrIndicator = document.createElement('div');
-    vrIndicator.className = 'vjs-vr-indicator';
-    vrIndicator.innerHTML = '<span>360° VR</span>';
-    player.el().appendChild(vrIndicator);
+  const initVR = () => {
+    if (player.vr && typeof player.vr === 'function') {
+      // Only initialize if not already done
+      if (!player.hasClass('vjs-vr-enabled')) {
+        console.log('Initializing VR plugin now');
+        player.vr(vrConfig);
 
-    // Add VR class for styling
-    player.addClass('vjs-vr-enabled');
+        // Add VR mode indicator
+        const vrIndicator = document.createElement('div');
+        vrIndicator.className = 'vjs-vr-indicator';
+        vrIndicator.innerHTML = '<span>360° VR</span>';
+        player.el().appendChild(vrIndicator);
 
-    console.log('VR plugin initialized with config:', vrConfig);
-  } else {
-    console.warn('VideoJS VR plugin not available');
+        // Add VR class for styling
+        player.addClass('vjs-vr-enabled');
+
+        console.log('VR plugin initialized with config:', vrConfig);
+      } else {
+        console.log('VR plugin already initialized');
+      }
+    } else {
+      console.warn('VideoJS VR plugin not available');
+    }
+  };
+
+  // Try to initialize immediately if possible
+  if (player.isReady_ && player.el_) {
+    initVR();
   }
+
+  // Add listeners for various player events that might indicate readiness
+  const events = ['ready', 'loadedmetadata', 'loadeddata', 'canplay', 'playing'];
+  events.forEach(event => {
+    player.one(event, () => {
+      console.log(`VR init attempt on ${event} event`);
+      initVR();
+    });
+  });
+
+  // If not initialized after all attempts, try once more with a backup timeout
+  setTimeout(initVR, 1000);
 }
